@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+</head>
+<body>
+    <h1>Resume Screening Results</h1>
+    <ul>
+        {% for score, resume in zip(scores, resumes) %}
+        <li>
+            <strong>Resume {{ loop.index }} Score:</strong> {{ "%.2f"|format(score) }}
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/">Try Again</a>
+</body>
+</html>

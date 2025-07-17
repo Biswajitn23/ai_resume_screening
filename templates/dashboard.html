@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Resume Shortlisting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Resume Shortlisting</h1>
+        <div class="flex-row">
+            <div class="card job-desc">
+                <h2>Job Description:</h2>
+                <p>{{ job_description }}</p>
+            </div>
+            <div class="card results">
+                <h2>Screening Results</h2>
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+        <div class="keyword-cloud card">
+            <h2>Keyword Cloud</h2>
+            <div class="cloud">
+                {% for kw in keywords %}
+                    <span class="keyword">{{ kw }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <input type="text" id="skillFilter" placeholder="Filter by skill..." onkeyup="filterTable()">
+        <div class="card">
+            {% if results|length == 0 %}
+                <div style="text-align:center; color:#ff6384; font-size:1.2em; padding:30px;">
+                    No screening results to display.<br>
+                    Please submit a job description and at least one resume.
+                </div>
+            {% else %}
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Education</th>
+                            <th>Experience</th>
+                            <th>Match Score</th>
+                            <th>Top Skills</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in results %}
+                        <tr>
+                            <td>{{ row['Candidate'] }}</td>
+                            <td>{{ row['Education'] }}</td>
+                            <td>{{ row['Experience'] }}</td>
+                            <td>
+                                <div class="score-bar">
+                                    <div class="score-fill" style="width: {{ row['Score'] }}%">{{ row['Score'] }}%</div>
+                                </div>
+                            </td>
+                            <td>{{ row['Top Skills'] }}</td>
+                            <td class="{{ 'shortlisted' if row['Status'] == 'Shortlisted' else 'rejected' }}">{{ row['Status'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <!-- Download Report Button as a POST form -->
+        <form method="POST" action="/export" style="display:inline;">
+            <button class="download-btn" type="submit">Download Report</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Pie chart for screening results
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        const shortlisted = {{ shortlisted_count }};
+        const rejected = {{ rejected_count }};
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Shortlisted', 'Rejected'],
+                datasets: [{
+                    data: [shortlisted, rejected],
+                    backgroundColor: ['#3cf0c5', '#ff6384'],
+                }]
+            }
+        });
+
+        // Filter table by skill
+        function filterTable() {
+            let input = document.getElementById("skillFilter").value.toLowerCase();
+            let rows = document.querySelectorAll("#resultsTable tbody tr");
+            rows.forEach(row => {
+                let skills = row.cells[4].innerText.toLowerCase();
+                row.style.display = skills.includes(input) ? "" : "none";
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Resumes & Job Description</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Resume Shortlisting</h1>
+        <form method="POST" enctype="multipart/form-data" class="submission-form">
+            <label for="job_desc">Job Description:</label>
+            <textarea name="job_desc" id="job_desc" rows="4" cols="60" placeholder="Paste job description here..." required></textarea>
+            <br><br>
+            <label for="resumes">Upload Resume(s) (PDF, DOCX, TXT):</label>
+            <input type="file" name="resumes" id="resumes" accept=".pdf,.doc,.docx,.txt" multiple>
+            <br><br>
+            <label for="resume_text">Or Paste Resume Text:</label>
+            <textarea name="resume_text" id="resume_text" rows="6" cols="60" placeholder="Paste resume text here..."></textarea>
+            <br>
+            <button type="submit" class="download-btn">Submit</button>
+        </form>
+    </div>
+</body>
+</html> 
